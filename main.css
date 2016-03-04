@@ -1,0 +1,36 @@
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.container {
+  width: 638px;
+  background-color: #000;
+  margin: 30px auto;
+  border: 5px solid #000;
+}
+.row div {
+  display: inline-block;
+  text-align: center;
+  line-height: 50px;
+  font-size: 18px;
+}
+
+.cell {
+  background-color: #eee;
+  height: 75px;
+  width: 75px;
+  cursor: pointer;
+}
+
+.black {
+  background-color: #5D1508;
+}
+
+.white {
+  background-color: #E9CE84;
+}
+
+.cell:hover {
+  opacity: 0.9;
+}
