@@ -5,7 +5,7 @@
 }
 
 .container {
-  width: 600px;
+  width: 675px;
   background-color: #000;
   margin: 30px auto;
   display: block;
@@ -26,28 +26,6 @@
   justify-content: center;
 }
 
-.white {
-  color: white;
-}
-
-.black {
-  color: black;
-}
-
-
-
-.black-cell {
-  background-color: #5D1508;
-}
-
-.white-cell {
-  background-color: #E9CE84;
-}
-
-.cell:hover {
-  opacity: 0.8;
-}
-
 .piece {
   width: 100%;
   height: 75%;
@@ -61,3 +39,36 @@
   font-size: 50px;
   position: absolute;
 }
+
+.white {
+  color: white;
+}
+
+.black {
+  color: black;
+}
+
+.clear-cell {
+  background-color: white;
+  border: none;
+  font-size: 50px;
+}
+
+.black-cell {
+  background-color: #5D1508;
+}
+
+.white-cell {
+  background-color: #E9CE84;
+}
+
+.cell:hover {
+  opacity: 0.8;
+}
+
+.clear-cell:hover{
+  cursor: auto;
+  opacity: 1;
+  font-size: ;
+}
+
