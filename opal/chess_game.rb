@@ -31,7 +31,18 @@ class Game
 
   def set_piece(current_col, current_row, target_col, target_row)
     piece = @board.get_piece(current_col, current_row)
+    enemy_piece = nil
+    enemy_piece = @board.get_piece(target_col, target_row) unless @board.get_piece(target_col, target_row).nil?
     @board.set_piece(piece, target_col, target_row)
+    if piece.my_king.check?
+      puts "piece is a #{piece.class} and it's location is #{piece.location}"
+      previous_loc = @board.convert_to_move(current_col, current_row)
+      target_loc = @board.convert_to_move(target_col, target_row)
+      @board.space_equals(previous_loc[0], previous_loc[1], piece)
+      @board.piece_at(previous_loc[0], previous_loc[1] ).location = previous_loc
+      @board.space_equals(target_loc[0], target_loc[1], enemy_piece)
+      @board.piece_at(target_loc[0], target_loc[1] ).location = target_loc unless @board.piece_at(target_loc[0], target_loc[1] ).nil?
+    end
   end
 end
 
@@ -115,7 +126,8 @@ class Piece
     moves = apply_location(moves)
     moves = apply_board_limits(moves)
     moves = apply_relative_pieces(moves)
-    moves.delete_if { |move| checkable_move?(move[0], move[1]) }
+    moves << @location
+    #moves.delete_if { |move| checkable_move?(move[0], move[1]) }
   end
 
   def possible_moves_without_relatives
@@ -338,7 +350,7 @@ end
 
 # Pawn Class inherits Piece Class
 class Pawn < Piece
-  attr_accessor :row_loc, :col_loc, :board, :html_text
+  attr_accessor :row_loc, :col_loc, :board, :html_text, :location
   def initialize(location = [0, 0], color = :black)
     @location = location
     @color = color
@@ -353,6 +365,7 @@ class Pawn < Piece
   end
 
   def possible_moves
+    puts "started pawn possible moves"
     moves = []
     if @color == :black
       two_in_front = @board.piece_at((@location[0] - 2), @location[1])
@@ -360,12 +373,17 @@ class Pawn < Piece
       northeastern_space = @board.piece_at((@row_loc - 1), (@col_loc - 1))
       northwestern_space = @board.piece_at((@row_loc - 1), (@col_loc + 1))
     else
+      puts "started white branch, @location:#{@location}"
       two_in_front = @board.piece_at((@row_loc + 2), @col_loc)
+      puts "finished two_in_front"
       northern_space = @board.piece_at((@row_loc + 1), @col_loc)
+      puts "finished northern_space"
       northeastern_space = @board.piece_at((@row_loc + 1), (@col_loc + 1))
+      puts "finished northeastern space"
       northwestern_space = @board.piece_at((@row_loc + 1), (@col_loc - 1))
+      puts "finished northwestern space"
     end
-    
+    puts "finished white branch"
     current_piece = @board.piece_at(@row_loc, @col_loc)
     if northern_space.nil? && @color == :white
       moves << [(@row_loc + 1), (@col_loc)]
@@ -386,6 +404,7 @@ class Pawn < Piece
       moves << [(@row_loc + 2), (@col_loc)]
     end
     moves << [@location[0], @location[1]]
+    puts "returned moves"
     moves
   end
 
@@ -393,12 +412,14 @@ class Pawn < Piece
     move = [row, col]
     current_piece = @board.piece_at(location[0], location[1])
     return nil unless possible_moves.include?(move)
+    puts "didn't return nil"
     @has_moved = true unless move == @location
-    @board.space_equals(current_piece.location[0], current_piece.location[1], nil)
     @board.space_equals(row, col, current_piece)
+    @board.space_equals(current_piece.location[0], current_piece.location[1], nil)
     current_piece.location = [row, col]
     current_piece.row_loc = row
     current_piece.col_loc = col
+    puts "pawn location: #{@location}"
   end
 end
 
@@ -415,14 +436,21 @@ class Knight < Piece
 
 # Knight's movements are different from other pieces
   def possible_moves
-    moves = [[-1, 2], [1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [0,0] ]
+    moves = [[-1, 2], [1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1] ]
     moves = apply_location(moves)
     moves = apply_board_limits(moves)
     moves = apply_relative_pieces(moves)
+    moves << @location
+  end
+
+  def ally_held_position?(move)
+    return false if @board.piece_at(move[0], move[1]).nil?
+    piece = @board.piece_at(move[0], move[1])
+    piece.color == @color
   end
 
   def apply_relative_pieces(moves)
-    moves.delete_if { |move| occupied_targets.include?(move) }
+      moves.delete_if { |move| ally_held_position?(move) }
   end
 end
 
@@ -493,9 +521,9 @@ class King < Piece
     moves = apply_location(moves)
     moves = apply_board_limits(moves)
     moves = apply_relative_pieces(moves)
-    moves.delete_if do |move|
-      checkable_move?(move[0], move[1])
-    end
+    #moves.delete_if do |move|
+      #checkable_move?(move[0], move[1])
+    #end
     moves << @location
   end
 
@@ -505,11 +533,18 @@ class King < Piece
   end
 
   def check?
-    my_enemies.each do |enemy|
-      if enemy.possible_moves.include?(@location)
-        return true
-      end
+    puts "started check"
+    @board.compute_moves
+    if @color == :black
+      puts "started black branch"
+      return true if @board.white_moves.include?(@location)
     end
+    if @color == :white
+      puts "started white branch"
+      return true if @board.black_moves.include?(@location)
+      puts "returned #{@board.black_moves.include?(@location)}"
+    end
+    puts "king is not in check"
     false
   end
 
@@ -524,8 +559,7 @@ class King < Piece
   def move_to(row, col)
     move = [row, col]
     current_piece = @board.piece_at(location[0], location[1])
-    return nil unless possible_moves.include?(move)
-    return nil if checkable_move?(row, col)
+    return nil unless (possible_moves.include?(move)) && (move != @location)
     @board.space_equals(current_piece.location[0], current_piece.location[1], nil)
     @board.space_equals(row, col, current_piece)
     current_piece.location = [row, col]
@@ -533,21 +567,33 @@ class King < Piece
     current_piece.col_loc = col
   end
 
-  def checkable_move?(row, col)
-    move = [row, col]
-    previous_loc = @location
-    checkable = false
-    current_piece = @board.piece_at(location[0], location[1])
-    enemy_piece = @board.piece_at(row, col) unless @board.piece_at(row, col).nil?
-    @board.space_equals(row, col, current_piece)
-    @board.space_equals(current_piece.location[0], current_piece.location[1], nil)
-    current_piece.location = [row, col]
-    checkable = current_piece.check?
-    current_piece.location = previous_loc
-    @board.space_equals(current_piece.location[0], current_piece.location[1], current_piece)
-    @board.space_equals(row, col, enemy_piece)
-    checkable
-  end
+  #def checkable_move?(row, col)
+    #@board.compute_moves
+    #move = [row, col]
+    #if @color == :black
+      #return true if @board.white_moves.include?(move)
+    #else if @color == :white
+      #return true if @board.black_moves.include?(move)
+    #end
+    #false
+  #end
+  
+  #def checkable_move?(row, col)
+    #move = [row, col]
+    #previous_loc = @location
+    #checkable = false
+    #current_piece = @board.piece_at(location[0], location[1])
+    #enemy_piece = @board.piece_at(row, col) unless @board.piece_at(row, col).nil?
+    #@board.space_equals(row, col, current_piece)
+    #@board.space_equals(current_piece.location[0], current_piece.location[1], nil)
+    #current_piece.location = [row, col]
+    #checkable = current_piece.check?
+    #current_piece.location = previous_loc
+    #@board.space_equals(current_piece.location[0], current_piece.location[1], current_piece)
+    #@board.space_equals(row, col, enemy_piece)
+    #checkable
+  #end
+
 end
 
 
@@ -557,10 +603,46 @@ end
 
 class Board
   #attr_reader :board
-  attr_accessor :board
+  attr_accessor :board, :black_moves, :white_moves
   def initialize(board = empty_board)
     @board = board
     set_board
+    @black_moves = []
+    @white_moves = []
+  end
+
+  def compute_moves
+    compute_black_moves
+    compute_white_moves
+  end
+
+  def compute_black_moves
+    puts "started computing black moves"
+    moves = []
+    all_pieces.each do |piece|
+      if piece.color == :black 
+        piece.possible_moves.each do |move|
+          moves << move
+        end
+      end
+    end
+    @black_moves = moves
+  end
+
+  def compute_white_moves
+    puts "started computing white moves"
+    moves = []
+    all_pieces.each do |piece|
+      if piece.color == :white 
+        puts "piece is a #{piece.class} at #{piece.location}"
+        piece.possible_moves.each do |move|
+          puts move.inspect if piece.location == [6, 4]
+          moves << move
+        end
+      end
+    end
+    puts "finished computing white moves"
+    @white_moves = moves
   end
 
   def stalemate?
@@ -604,7 +686,7 @@ class Board
     pieces = []
     0.upto(7).each do |row|
       0.upto(7).each do |col|
-        pieces << @board[row][col] if !@board[row][col].nil?
+        pieces << piece_at(row, col) if ! piece_at(row, col).nil?
       end
     end
     pieces
@@ -638,16 +720,6 @@ class Board
     Array.new(8) { Array.new(8) }
   end
 
-  def display_board
-    puts '  a  b  c  d  e  f  g  h'
-    7.downto(0) do |line|
-      print line + 1
-      display_even_line(line) if line.even?
-      display_odd_line(line) if line.odd?
-    end
-    puts '  a  b  c  d  e  f  g  h'
-  end
-
   def space_equals(row, col, data)
     @board[row][col] = data
   end
@@ -663,49 +735,8 @@ class Board
   end
 
   def piece_at(row, column)
+    return nil if (row > 7) || (row < 0) || (column > 7) || (column < 0)
     @board[row][column]
-  end
-
-  def display_even_line(line)
-    0.upto(7) do |cell|
-      if @board[line][cell].nil?
-        print "   ".black_on_blue if cell.even?
-        print "   ".black_on_green if cell.odd?
-      else
-        if @board[line][cell].color == :black
-          print " #{@board[line][cell].piece} ".black_on_blue if cell.even?
-          print " #{@board[line][cell].piece} ".black_on_green if cell.odd?
-         else
-          print " #{@board[line][cell].piece} ".white_on_blue if cell.even?
-          print " #{@board[line][cell].piece} ".white_on_green if cell.odd?
-        end
-      end
-      if cell == 7
-        print line + 1
-      end
-    end
-    print "\n"
-  end
-
-  def display_odd_line(line)
-    0.upto(7) do |cell|
-      if @board[line][cell].nil?
-          print "   ".black_on_green if cell.even?
-          print "   ".black_on_blue if cell.odd?
-      else
-        if @board[line][cell].color == :black
-          print " #{@board[line][cell].piece} ".black_on_green if cell.even?
-          print " #{@board[line][cell].piece} ".black_on_blue if cell.odd?
-        else
-          print " #{@board[line][cell].piece} ".white_on_green if cell.even?
-          print " #{@board[line][cell].piece} ".white_on_blue if cell.odd?
-        end
-      end
-      if cell == 7
-        print line + 1
-      end
-    end
-    print "\n"
   end
 
   def set_board

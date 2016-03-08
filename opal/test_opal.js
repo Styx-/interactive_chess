@@ -19134,7 +19134,7 @@ Opal.modules["corelib/unsupported"] = function(Opal) {
   }
   var self = Opal.top, $scope = Opal, nil = Opal.nil, $breaker = Opal.breaker, $slice = Opal.slice, $klass = Opal.klass, $hash2 = Opal.hash2;
 
-  Opal.add_stubs(['$new', '$set_board_pointer', '$each', '$!', '$nil?', '$[]', '$board', '$board=', '$upto', '$get_piece', '$html_text', '$color', '$include?', '$possible_moves', '$convert_to_move', '$set_piece', '$attr_accessor', '$attr_reader', '$==', '$black_king', '$white_king', '$class', '$piece_color', '$eql?', '$piece_at', '$location', '$space_equals', '$location=', '$occupied_targets', '$select', '$enemy_of?', '$map', '$downto', '$<<', '$-@', '$to_a', '$my_repeated_permutation', '$apply_directions', '$apply_location', '$apply_board_limits', '$apply_relative_pieces', '$delete_if', '$checkable_move?', '$reachable_enemy?', '$further_than?', '$possible_moves_without_relatives', '$!=', '$<', '$>', '$+', '$*', '$cardinal_move?', '$can_move_north?', '$northern_move?', '$can_move_south?', '$southern_move?', '$can_move_east?', '$eastern_move?', '$can_move_west?', '$western_move?', '$can_move_northeast?', '$northeastern_move?', '$can_move_northwest?', '$northwestern_move?', '$can_move_southeast?', '$southeastern_move?', '$can_move_southwest?', '$southwestern_move?', '$north_of?', '$south_of?', '$east_of?', '$west_of?', '$northeast_of?', '$northwest_of?', '$southeast_of?', '$southwest_of?', '$same_direction?', '$check?', '$my_king', '$-', '$diagonal_of?', '$>=', '$<=', '$row_loc=', '$col_loc=', '$enemies_of', '$my_enemies', '$set_board', '$empty_board', '$all_pieces', '$stalemate?', '$checkmate?', '$kings', '$move_to', '$puts', '$print', '$even?', '$display_even_line', '$odd?', '$display_odd_line', '$[]=', '$black_on_blue', '$black_on_green', '$piece', '$white_on_blue', '$white_on_green', '$set_pawns', '$set_nobles', '$each_index', '$set_white_nobles', '$set_black_nobles', '$===']);
+  Opal.add_stubs(['$new', '$set_board_pointer', '$each', '$!', '$nil?', '$[]', '$board', '$board=', '$upto', '$get_piece', '$html_text', '$color', '$include?', '$possible_moves', '$convert_to_move', '$set_piece', '$check?', '$my_king', '$puts', '$class', '$location', '$space_equals', '$location=', '$piece_at', '$attr_accessor', '$attr_reader', '$==', '$black_king', '$white_king', '$piece_color', '$eql?', '$occupied_targets', '$select', '$enemy_of?', '$map', '$downto', '$<<', '$-@', '$to_a', '$my_repeated_permutation', '$apply_directions', '$apply_location', '$apply_board_limits', '$apply_relative_pieces', '$reachable_enemy?', '$further_than?', '$delete_if', '$possible_moves_without_relatives', '$!=', '$<', '$>', '$+', '$*', '$cardinal_move?', '$can_move_north?', '$northern_move?', '$can_move_south?', '$southern_move?', '$can_move_east?', '$eastern_move?', '$can_move_west?', '$western_move?', '$can_move_northeast?', '$northeastern_move?', '$can_move_northwest?', '$northwestern_move?', '$can_move_southeast?', '$southeastern_move?', '$can_move_southwest?', '$southwestern_move?', '$north_of?', '$south_of?', '$east_of?', '$west_of?', '$northeast_of?', '$northwest_of?', '$southeast_of?', '$southwest_of?', '$same_direction?', '$-', '$diagonal_of?', '$>=', '$<=', '$row_loc=', '$col_loc=', '$ally_held_position?', '$enemies_of', '$compute_moves', '$white_moves', '$black_moves', '$checkable_move?', '$set_board', '$empty_board', '$compute_black_moves', '$compute_white_moves', '$all_pieces', '$inspect', '$stalemate?', '$checkmate?', '$kings', '$move_to', '$[]=', '$set_pawns', '$set_nobles', '$each_index', '$set_white_nobles', '$set_black_nobles', '$===']);
   (function($base, $super) {
     function $Game(){};
     var self = $Game = $klass($base, $super, 'Game', $Game);
@@ -19186,10 +19186,30 @@ if (col == null) col = nil;
     });
 
     return (Opal.defn(self, '$set_piece', function(current_col, current_row, target_col, target_row) {
-      var self = this, piece = nil;
+      var $a, $b, self = this, piece = nil, enemy_piece = nil, previous_loc = nil, target_loc = nil;
 
       piece = self.board.$get_piece(current_col, current_row);
-      return self.board.$set_piece(piece, target_col, target_row);
+      enemy_piece = nil;
+      if ((($a = self.board.$get_piece(target_col, target_row)['$nil?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
+        } else {
+        enemy_piece = self.board.$get_piece(target_col, target_row)
+      };
+      self.board.$set_piece(piece, target_col, target_row);
+      if ((($a = piece.$my_king()['$check?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
+        self.$puts("piece is a " + (piece.$class()) + " and it's location is " + (piece.$location()));
+        previous_loc = self.board.$convert_to_move(current_col, current_row);
+        target_loc = self.board.$convert_to_move(target_col, target_row);
+        self.board.$space_equals(previous_loc['$[]'](0), previous_loc['$[]'](1), piece);
+        (($a = [previous_loc]), $b = self.board.$piece_at(previous_loc['$[]'](0), previous_loc['$[]'](1)), $b['$location='].apply($b, $a), $a[$a.length-1]);
+        self.board.$space_equals(target_loc['$[]'](0), target_loc['$[]'](1), enemy_piece);
+        if ((($a = self.board.$piece_at(target_loc['$[]'](0), target_loc['$[]'](1))['$nil?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
+          return nil
+          } else {
+          return (($a = [target_loc]), $b = self.board.$piece_at(target_loc['$[]'](0), target_loc['$[]'](1)), $b['$location='].apply($b, $a), $a[$a.length-1])
+        };
+        } else {
+        return nil
+      };
     }), nil) && 'set_piece';
   })($scope.base, null);
   (function($base, $super) {
@@ -19276,7 +19296,7 @@ if (target == null) target = nil;
     });
 
     Opal.defn(self, '$possible_moves', function() {
-      var $a, $b, TMP_5, $c, TMP_6, self = this, moves = nil;
+      var $a, $b, TMP_5, self = this, moves = nil;
 
       moves = [];
       ($a = ($b = self.reach).$downto, $a.$$p = (TMP_5 = function(num){var self = TMP_5.$$s || this;
@@ -19287,18 +19307,16 @@ if (num == null) num = nil;
       moves = self.$apply_location(moves);
       moves = self.$apply_board_limits(moves);
       moves = self.$apply_relative_pieces(moves);
-      return ($a = ($c = moves).$delete_if, $a.$$p = (TMP_6 = function(move){var self = TMP_6.$$s || this;
-if (move == null) move = nil;
-      return self['$checkable_move?'](move['$[]'](0), move['$[]'](1))}, TMP_6.$$s = self, TMP_6), $a).call($c);
+      return moves['$<<'](self.location);
     });
 
     Opal.defn(self, '$possible_moves_without_relatives', function() {
-      var $a, $b, TMP_7, self = this, moves = nil;
+      var $a, $b, TMP_6, self = this, moves = nil;
 
       moves = [];
-      ($a = ($b = self.reach).$downto, $a.$$p = (TMP_7 = function(num){var self = TMP_7.$$s || this;
+      ($a = ($b = self.reach).$downto, $a.$$p = (TMP_6 = function(num){var self = TMP_6.$$s || this;
 if (num == null) num = nil;
-      return moves['$<<'](num)}, TMP_7.$$s = self, TMP_7), $a).call($b, self.reach['$-@']());
+      return moves['$<<'](num)}, TMP_6.$$s = self, TMP_6), $a).call($b, self.reach['$-@']());
       moves = moves.$my_repeated_permutation().$to_a();
       moves = self.$apply_directions(moves);
       moves = self.$apply_location(moves);
@@ -19306,47 +19324,47 @@ if (num == null) num = nil;
     });
 
     Opal.defn(self, '$apply_relative_pieces', function(moves) {
-      var $a, $b, TMP_8, $c, TMP_9, $d, TMP_11, self = this, moves_to_delete = nil;
+      var $a, $b, TMP_7, $c, TMP_8, $d, TMP_10, self = this, moves_to_delete = nil;
 
       moves_to_delete = [];
-      ($a = ($b = moves).$each, $a.$$p = (TMP_8 = function(target){var self = TMP_8.$$s || this, $a, $b;
+      ($a = ($b = moves).$each, $a.$$p = (TMP_7 = function(target){var self = TMP_7.$$s || this, $a, $b;
 if (target == null) target = nil;
       if ((($a = ($b = (self.$occupied_targets()['$include?'](target)), $b !== false && $b !== nil ?(self['$reachable_enemy?'](target)['$!']()) : $b)) !== nil && (!$a.$$is_boolean || $a == true))) {
           return moves_to_delete['$<<'](target)
           } else {
           return nil
-        }}, TMP_8.$$s = self, TMP_8), $a).call($b);
-      ($a = ($c = moves).$each, $a.$$p = (TMP_9 = function(target){var self = TMP_9.$$s || this, $a, $b, TMP_10;
+        }}, TMP_7.$$s = self, TMP_7), $a).call($b);
+      ($a = ($c = moves).$each, $a.$$p = (TMP_8 = function(target){var self = TMP_8.$$s || this, $a, $b, TMP_9;
 if (target == null) target = nil;
-      return ($a = ($b = moves_to_delete).$each, $a.$$p = (TMP_10 = function(to_delete){var self = TMP_10.$$s || this, $a;
+      return ($a = ($b = moves_to_delete).$each, $a.$$p = (TMP_9 = function(to_delete){var self = TMP_9.$$s || this, $a;
           if (self.location == null) self.location = nil;
 if (to_delete == null) to_delete = nil;
         if ((($a = self['$further_than?'](to_delete, target, self.location)) !== nil && (!$a.$$is_boolean || $a == true))) {
             return moves_to_delete['$<<'](target)
             } else {
             return nil
-          }}, TMP_10.$$s = self, TMP_10), $a).call($b)}, TMP_9.$$s = self, TMP_9), $a).call($c);
-      return ($a = ($d = moves).$delete_if, $a.$$p = (TMP_11 = function(move){var self = TMP_11.$$s || this;
+          }}, TMP_9.$$s = self, TMP_9), $a).call($b)}, TMP_8.$$s = self, TMP_8), $a).call($c);
+      return ($a = ($d = moves).$delete_if, $a.$$p = (TMP_10 = function(move){var self = TMP_10.$$s || this;
 if (move == null) move = nil;
-      return moves_to_delete['$include?'](move)}, TMP_11.$$s = self, TMP_11), $a).call($d);
+      return moves_to_delete['$include?'](move)}, TMP_10.$$s = self, TMP_10), $a).call($d);
     });
 
     Opal.defn(self, '$reachable_enemy?', function(target) {try {
 
-      var $a, $b, TMP_12, self = this;
+      var $a, $b, TMP_11, self = this;
 
       if ((($a = self.board.$piece_at(target['$[]'](0), target['$[]'](1))['$nil?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         return false};
       if (self.board.$piece_at(target['$[]'](0), target['$[]'](1)).$color()['$=='](self.color)) {
         return false};
-      ($a = ($b = self.$occupied_targets()).$each, $a.$$p = (TMP_12 = function(occ_target){var self = TMP_12.$$s || this, $a;
+      ($a = ($b = self.$occupied_targets()).$each, $a.$$p = (TMP_11 = function(occ_target){var self = TMP_11.$$s || this, $a;
         if (self.location == null) self.location = nil;
 if (occ_target == null) occ_target = nil;
       if ((($a = self['$further_than?'](occ_target, target, self.location)) !== nil && (!$a.$$is_boolean || $a == true))) {
           Opal.ret(false)
           } else {
           return nil
-        }}, TMP_12.$$s = self, TMP_12), $a).call($b);
+        }}, TMP_11.$$s = self, TMP_11), $a).call($b);
       if ((($a = self.$possible_moves_without_relatives()['$include?'](target)) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
         return false
@@ -19364,75 +19382,75 @@ if (occ_target == null) occ_target = nil;
     });
 
     Opal.defn(self, '$apply_board_limits', function(moves) {
-      var $a, $b, TMP_13, self = this;
+      var $a, $b, TMP_12, self = this;
 
-      return ($a = ($b = moves).$delete_if, $a.$$p = (TMP_13 = function(move){var self = TMP_13.$$s || this, $a, $b, $c;
+      return ($a = ($b = moves).$delete_if, $a.$$p = (TMP_12 = function(move){var self = TMP_12.$$s || this, $a, $b, $c;
 if (move == null) move = nil;
-      return ((($a = ((($b = ((($c = $rb_lt(move['$[]'](0), 0)) !== false && $c !== nil) ? $c : $rb_gt(move['$[]'](0), 7))) !== false && $b !== nil) ? $b : $rb_lt(move['$[]'](1), 0))) !== false && $a !== nil) ? $a : $rb_gt(move['$[]'](1), 7))}, TMP_13.$$s = self, TMP_13), $a).call($b);
+      return ((($a = ((($b = ((($c = $rb_lt(move['$[]'](0), 0)) !== false && $c !== nil) ? $c : $rb_gt(move['$[]'](0), 7))) !== false && $b !== nil) ? $b : $rb_lt(move['$[]'](1), 0))) !== false && $a !== nil) ? $a : $rb_gt(move['$[]'](1), 7))}, TMP_12.$$s = self, TMP_12), $a).call($b);
     });
 
     Opal.defn(self, '$apply_location', function(moves) {
-      var $a, $b, TMP_14, self = this;
+      var $a, $b, TMP_13, self = this;
 
-      return ($a = ($b = moves).$map, $a.$$p = (TMP_14 = function(move){var self = TMP_14.$$s || this;
+      return ($a = ($b = moves).$map, $a.$$p = (TMP_13 = function(move){var self = TMP_13.$$s || this;
         if (self.location == null) self.location = nil;
 if (move == null) move = nil;
-      return [($rb_plus(move['$[]'](0), self.location['$[]'](0))), ($rb_plus(move['$[]'](1), self.location['$[]'](1)))]}, TMP_14.$$s = self, TMP_14), $a).call($b);
+      return [($rb_plus(move['$[]'](0), self.location['$[]'](0))), ($rb_plus(move['$[]'](1), self.location['$[]'](1)))]}, TMP_13.$$s = self, TMP_13), $a).call($b);
     });
 
     Opal.defn(self, '$apply_directions', function(moves) {
-      var $a, $b, TMP_15, $c, TMP_16, $d, TMP_17, $e, TMP_18, $f, TMP_19, $g, TMP_20, $h, TMP_21, $i, TMP_22, $j, TMP_23, self = this;
+      var $a, $b, TMP_14, $c, TMP_15, $d, TMP_16, $e, TMP_17, $f, TMP_18, $g, TMP_19, $h, TMP_20, $i, TMP_21, $j, TMP_22, self = this;
 
-      ($a = ($b = moves).$delete_if, $a.$$p = (TMP_15 = function(move){var self = TMP_15.$$s || this, $a, $b;
+      ($a = ($b = moves).$delete_if, $a.$$p = (TMP_14 = function(move){var self = TMP_14.$$s || this, $a, $b;
 if (move == null) move = nil;
-      return ($a = ($b = (($rb_times(move['$[]'](0), -1))['$!='](move['$[]'](1))), $b !== false && $b !== nil ?(self['$cardinal_move?'](move)['$!']()) : $b), $a !== false && $a !== nil ?(move['$[]'](0)['$!='](move['$[]'](1))) : $a)}, TMP_15.$$s = self, TMP_15), $a).call($b);
+      return ($a = ($b = (($rb_times(move['$[]'](0), -1))['$!='](move['$[]'](1))), $b !== false && $b !== nil ?(self['$cardinal_move?'](move)['$!']()) : $b), $a !== false && $a !== nil ?(move['$[]'](0)['$!='](move['$[]'](1))) : $a)}, TMP_14.$$s = self, TMP_14), $a).call($b);
       if ((($a = self['$can_move_north?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
-        ($a = ($c = moves).$delete_if, $a.$$p = (TMP_16 = function(move){var self = TMP_16.$$s || this;
+        ($a = ($c = moves).$delete_if, $a.$$p = (TMP_15 = function(move){var self = TMP_15.$$s || this;
 if (move == null) move = nil;
-        return self['$northern_move?'](move)}, TMP_16.$$s = self, TMP_16), $a).call($c)
+        return self['$northern_move?'](move)}, TMP_15.$$s = self, TMP_15), $a).call($c)
       };
       if ((($a = self['$can_move_south?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
-        ($a = ($d = moves).$delete_if, $a.$$p = (TMP_17 = function(move){var self = TMP_17.$$s || this;
+        ($a = ($d = moves).$delete_if, $a.$$p = (TMP_16 = function(move){var self = TMP_16.$$s || this;
 if (move == null) move = nil;
-        return self['$southern_move?'](move)}, TMP_17.$$s = self, TMP_17), $a).call($d)
+        return self['$southern_move?'](move)}, TMP_16.$$s = self, TMP_16), $a).call($d)
       };
       if ((($a = self['$can_move_east?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
-        ($a = ($e = moves).$delete_if, $a.$$p = (TMP_18 = function(move){var self = TMP_18.$$s || this;
+        ($a = ($e = moves).$delete_if, $a.$$p = (TMP_17 = function(move){var self = TMP_17.$$s || this;
 if (move == null) move = nil;
-        return self['$eastern_move?'](move)}, TMP_18.$$s = self, TMP_18), $a).call($e)
+        return self['$eastern_move?'](move)}, TMP_17.$$s = self, TMP_17), $a).call($e)
       };
       if ((($a = self['$can_move_west?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
-        ($a = ($f = moves).$delete_if, $a.$$p = (TMP_19 = function(move){var self = TMP_19.$$s || this;
+        ($a = ($f = moves).$delete_if, $a.$$p = (TMP_18 = function(move){var self = TMP_18.$$s || this;
 if (move == null) move = nil;
-        return self['$western_move?'](move)}, TMP_19.$$s = self, TMP_19), $a).call($f)
+        return self['$western_move?'](move)}, TMP_18.$$s = self, TMP_18), $a).call($f)
       };
       if ((($a = self['$can_move_northeast?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
-        ($a = ($g = moves).$delete_if, $a.$$p = (TMP_20 = function(move){var self = TMP_20.$$s || this;
+        ($a = ($g = moves).$delete_if, $a.$$p = (TMP_19 = function(move){var self = TMP_19.$$s || this;
 if (move == null) move = nil;
-        return self['$northeastern_move?'](move)}, TMP_20.$$s = self, TMP_20), $a).call($g)
+        return self['$northeastern_move?'](move)}, TMP_19.$$s = self, TMP_19), $a).call($g)
       };
       if ((($a = self['$can_move_northwest?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
-        ($a = ($h = moves).$delete_if, $a.$$p = (TMP_21 = function(move){var self = TMP_21.$$s || this;
+        ($a = ($h = moves).$delete_if, $a.$$p = (TMP_20 = function(move){var self = TMP_20.$$s || this;
 if (move == null) move = nil;
-        return self['$northwestern_move?'](move)}, TMP_21.$$s = self, TMP_21), $a).call($h)
+        return self['$northwestern_move?'](move)}, TMP_20.$$s = self, TMP_20), $a).call($h)
       };
       if ((($a = self['$can_move_southeast?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
-        ($a = ($i = moves).$delete_if, $a.$$p = (TMP_22 = function(move){var self = TMP_22.$$s || this;
+        ($a = ($i = moves).$delete_if, $a.$$p = (TMP_21 = function(move){var self = TMP_21.$$s || this;
 if (move == null) move = nil;
-        return self['$southeastern_move?'](move)}, TMP_22.$$s = self, TMP_22), $a).call($i)
+        return self['$southeastern_move?'](move)}, TMP_21.$$s = self, TMP_21), $a).call($i)
       };
       if ((($a = self['$can_move_southwest?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
-        ($a = ($j = moves).$delete_if, $a.$$p = (TMP_23 = function(move){var self = TMP_23.$$s || this;
+        ($a = ($j = moves).$delete_if, $a.$$p = (TMP_22 = function(move){var self = TMP_22.$$s || this;
 if (move == null) move = nil;
-        return self['$southwestern_move?'](move)}, TMP_23.$$s = self, TMP_23), $a).call($j)
+        return self['$southwestern_move?'](move)}, TMP_22.$$s = self, TMP_22), $a).call($j)
       };
       moves['$<<']([0, 0]);
       return moves;
@@ -19668,7 +19686,7 @@ if (move == null) move = nil;
     var def = self.$$proto, $scope = self.$$scope;
 
     def.location = def.color = def.board = def.row_loc = def.col_loc = def.has_moved = nil;
-    self.$attr_accessor("row_loc", "col_loc", "board", "html_text");
+    self.$attr_accessor("row_loc", "col_loc", "board", "html_text", "location");
 
     Opal.defn(self, '$initialize', function(location, color) {
       var self = this;
@@ -19694,6 +19712,7 @@ if (move == null) move = nil;
     Opal.defn(self, '$possible_moves', function() {
       var $a, $b, $c, self = this, moves = nil, two_in_front = nil, northern_space = nil, northeastern_space = nil, northwestern_space = nil, current_piece = nil;
 
+      self.$puts("started pawn possible moves");
       moves = [];
       if (self.color['$==']("black")) {
         two_in_front = self.board.$piece_at(($rb_minus(self.location['$[]'](0), 2)), self.location['$[]'](1));
@@ -19701,11 +19720,17 @@ if (move == null) move = nil;
         northeastern_space = self.board.$piece_at(($rb_minus(self.row_loc, 1)), ($rb_minus(self.col_loc, 1)));
         northwestern_space = self.board.$piece_at(($rb_minus(self.row_loc, 1)), ($rb_plus(self.col_loc, 1)));
         } else {
+        self.$puts("started white branch, @location:" + (self.location));
         two_in_front = self.board.$piece_at(($rb_plus(self.row_loc, 2)), self.col_loc);
+        self.$puts("finished two_in_front");
         northern_space = self.board.$piece_at(($rb_plus(self.row_loc, 1)), self.col_loc);
+        self.$puts("finished northern_space");
         northeastern_space = self.board.$piece_at(($rb_plus(self.row_loc, 1)), ($rb_plus(self.col_loc, 1)));
+        self.$puts("finished northeastern space");
         northwestern_space = self.board.$piece_at(($rb_plus(self.row_loc, 1)), ($rb_minus(self.col_loc, 1)));
+        self.$puts("finished northwestern space");
       };
+      self.$puts("finished white branch");
       current_piece = self.board.$piece_at(self.row_loc, self.col_loc);
       if ((($a = ($b = northern_space['$nil?'](), $b !== false && $b !== nil ?self.color['$==']("white") : $b)) !== nil && (!$a.$$is_boolean || $a == true))) {
         moves['$<<']([($rb_plus(self.row_loc, 1)), (self.col_loc)])};
@@ -19720,6 +19745,7 @@ if (move == null) move = nil;
       if ((($a = ($b = ($c = (self.has_moved['$!']()), $c !== false && $c !== nil ?(two_in_front)['$nil?']() : $c), $b !== false && $b !== nil ?(self.color['$==']("white")) : $b)) !== nil && (!$a.$$is_boolean || $a == true))) {
         moves['$<<']([($rb_plus(self.row_loc, 2)), (self.col_loc)])};
       moves['$<<']([self.location['$[]'](0), self.location['$[]'](1)]);
+      self.$puts("returned moves");
       return moves;
     });
 
@@ -19732,15 +19758,17 @@ if (move == null) move = nil;
         } else {
         return nil
       };
+      self.$puts("didn't return nil");
       if (move['$=='](self.location)) {
         } else {
         self.has_moved = true
       };
-      self.board.$space_equals(current_piece.$location()['$[]'](0), current_piece.$location()['$[]'](1), nil);
       self.board.$space_equals(row, col, current_piece);
+      self.board.$space_equals(current_piece.$location()['$[]'](0), current_piece.$location()['$[]'](1), nil);
       (($a = [[row, col]]), $b = current_piece, $b['$location='].apply($b, $a), $a[$a.length-1]);
       (($a = [row]), $b = current_piece, $b['$row_loc='].apply($b, $a), $a[$a.length-1]);
-      return (($a = [col]), $b = current_piece, $b['$col_loc='].apply($b, $a), $a[$a.length-1]);
+      (($a = [col]), $b = current_piece, $b['$col_loc='].apply($b, $a), $a[$a.length-1]);
+      return self.$puts("pawn location: " + (self.location));
     }), nil) && 'move_to';
   })($scope.base, $scope.get('Piece'));
   (function($base, $super) {
@@ -19749,6 +19777,7 @@ if (move == null) move = nil;
 
     var def = self.$$proto, $scope = self.$$scope;
 
+    def.location = def.board = def.color = nil;
     self.$attr_reader("html_text");
 
     Opal.defn(self, '$initialize', function(location, color) {
@@ -19770,18 +19799,28 @@ if (move == null) move = nil;
     Opal.defn(self, '$possible_moves', function() {
       var self = this, moves = nil;
 
-      moves = [[-1, 2], [1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [0, 0]];
+      moves = [[-1, 2], [1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1]];
       moves = self.$apply_location(moves);
       moves = self.$apply_board_limits(moves);
-      return moves = self.$apply_relative_pieces(moves);
+      moves = self.$apply_relative_pieces(moves);
+      return moves['$<<'](self.location);
+    });
+
+    Opal.defn(self, '$ally_held_position?', function(move) {
+      var $a, self = this, piece = nil;
+
+      if ((($a = self.board.$piece_at(move['$[]'](0), move['$[]'](1))['$nil?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
+        return false};
+      piece = self.board.$piece_at(move['$[]'](0), move['$[]'](1));
+      return piece.$color()['$=='](self.color);
     });
 
     return (Opal.defn(self, '$apply_relative_pieces', function(moves) {
-      var $a, $b, TMP_24, self = this;
+      var $a, $b, TMP_23, self = this;
 
-      return ($a = ($b = moves).$delete_if, $a.$$p = (TMP_24 = function(move){var self = TMP_24.$$s || this;
+      return ($a = ($b = moves).$delete_if, $a.$$p = (TMP_23 = function(move){var self = TMP_23.$$s || this;
 if (move == null) move = nil;
-      return self.$occupied_targets()['$include?'](move)}, TMP_24.$$s = self, TMP_24), $a).call($b);
+      return self['$ally_held_position?'](move)}, TMP_23.$$s = self, TMP_23), $a).call($b);
     }), nil) && 'apply_relative_pieces';
   })($scope.base, $scope.get('Piece'));
   (function($base, $super) {
@@ -19868,7 +19907,7 @@ if (move == null) move = nil;
 
     var def = self.$$proto, $scope = self.$$scope;
 
-    def.reach = def.location = def.board = nil;
+    def.reach = def.location = def.board = def.color = nil;
     self.$attr_accessor("row_loc", "col_loc");
 
     self.$attr_reader("board", "html_text");
@@ -19892,20 +19931,17 @@ if (move == null) move = nil;
     });
 
     Opal.defn(self, '$possible_moves', function() {
-      var $a, $b, TMP_25, $c, TMP_26, self = this, moves = nil;
+      var $a, $b, TMP_24, self = this, moves = nil;
 
       moves = [];
-      ($a = ($b = self.reach).$downto, $a.$$p = (TMP_25 = function(num){var self = TMP_25.$$s || this;
+      ($a = ($b = self.reach).$downto, $a.$$p = (TMP_24 = function(num){var self = TMP_24.$$s || this;
 if (num == null) num = nil;
-      return moves['$<<'](num)}, TMP_25.$$s = self, TMP_25), $a).call($b, self.reach['$-@']());
+      return moves['$<<'](num)}, TMP_24.$$s = self, TMP_24), $a).call($b, self.reach['$-@']());
       moves = moves.$my_repeated_permutation().$to_a();
       moves = self.$apply_directions(moves);
       moves = self.$apply_location(moves);
       moves = self.$apply_board_limits(moves);
       moves = self.$apply_relative_pieces(moves);
-      ($a = ($c = moves).$delete_if, $a.$$p = (TMP_26 = function(move){var self = TMP_26.$$s || this;
-if (move == null) move = nil;
-      return self['$checkable_move?'](move['$[]'](0), move['$[]'](1))}, TMP_26.$$s = self, TMP_26), $a).call($c);
       return moves['$<<'](self.location);
     });
 
@@ -19916,77 +19952,56 @@ if (move == null) move = nil;
       return self.$enemies_of(me);
     });
 
-    Opal.defn(self, '$check?', function() {try {
+    Opal.defn(self, '$check?', function() {
+      var $a, self = this;
 
-      var $a, $b, TMP_27, self = this;
-
-      ($a = ($b = self.$my_enemies()).$each, $a.$$p = (TMP_27 = function(enemy){var self = TMP_27.$$s || this, $a;
-        if (self.location == null) self.location = nil;
-if (enemy == null) enemy = nil;
-      if ((($a = enemy.$possible_moves()['$include?'](self.location)) !== nil && (!$a.$$is_boolean || $a == true))) {
-          Opal.ret(true)
-          } else {
-          return nil
-        }}, TMP_27.$$s = self, TMP_27), $a).call($b);
+      self.$puts("started check");
+      self.board.$compute_moves();
+      if (self.color['$==']("black")) {
+        self.$puts("started black branch");
+        if ((($a = self.board.$white_moves()['$include?'](self.location)) !== nil && (!$a.$$is_boolean || $a == true))) {
+          return true};};
+      if (self.color['$==']("white")) {
+        self.$puts("started white branch");
+        if ((($a = self.board.$black_moves()['$include?'](self.location)) !== nil && (!$a.$$is_boolean || $a == true))) {
+          return true};
+        self.$puts("returned " + (self.board.$black_moves()['$include?'](self.location)));};
+      self.$puts("king is not in check");
       return false;
-      } catch ($returner) { if ($returner === Opal.returner) { return $returner.$v } throw $returner; }
     });
 
     Opal.defn(self, '$checkmate?', function() {try {
 
-      var $a, $b, TMP_28, self = this;
+      var $a, $b, TMP_25, self = this;
 
       if ((($a = self['$check?']()['$!']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         return false};
-      ($a = ($b = self.$possible_moves()).$each, $a.$$p = (TMP_28 = function(move){var self = TMP_28.$$s || this, $a;
+      ($a = ($b = self.$possible_moves()).$each, $a.$$p = (TMP_25 = function(move){var self = TMP_25.$$s || this, $a;
 if (move == null) move = nil;
       if ((($a = self['$checkable_move?'](move['$[]'](0), move['$[]'](1))['$!']()) !== nil && (!$a.$$is_boolean || $a == true))) {
           Opal.ret(false)
           } else {
           return nil
-        }}, TMP_28.$$s = self, TMP_28), $a).call($b);
+        }}, TMP_25.$$s = self, TMP_25), $a).call($b);
       return true;
       } catch ($returner) { if ($returner === Opal.returner) { return $returner.$v } throw $returner; }
     });
 
-    Opal.defn(self, '$move_to', function(row, col) {
+    return (Opal.defn(self, '$move_to', function(row, col) {
       var $a, $b, self = this, move = nil, current_piece = nil;
 
       move = [row, col];
       current_piece = self.board.$piece_at(self.$location()['$[]'](0), self.$location()['$[]'](1));
-      if ((($a = self.$possible_moves()['$include?'](move)) !== nil && (!$a.$$is_boolean || $a == true))) {
+      if ((($a = ($b = (self.$possible_moves()['$include?'](move)), $b !== false && $b !== nil ?(move['$!='](self.location)) : $b)) !== nil && (!$a.$$is_boolean || $a == true))) {
         } else {
         return nil
       };
-      if ((($a = self['$checkable_move?'](row, col)) !== nil && (!$a.$$is_boolean || $a == true))) {
-        return nil};
       self.board.$space_equals(current_piece.$location()['$[]'](0), current_piece.$location()['$[]'](1), nil);
       self.board.$space_equals(row, col, current_piece);
       (($a = [[row, col]]), $b = current_piece, $b['$location='].apply($b, $a), $a[$a.length-1]);
       (($a = [row]), $b = current_piece, $b['$row_loc='].apply($b, $a), $a[$a.length-1]);
       return (($a = [col]), $b = current_piece, $b['$col_loc='].apply($b, $a), $a[$a.length-1]);
-    });
-
-    return (Opal.defn(self, '$checkable_move?', function(row, col) {
-      var $a, $b, self = this, move = nil, previous_loc = nil, checkable = nil, current_piece = nil, enemy_piece = nil;
-
-      move = [row, col];
-      previous_loc = self.location;
-      checkable = false;
-      current_piece = self.board.$piece_at(self.$location()['$[]'](0), self.$location()['$[]'](1));
-      if ((($a = self.board.$piece_at(row, col)['$nil?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-        } else {
-        enemy_piece = self.board.$piece_at(row, col)
-      };
-      self.board.$space_equals(row, col, current_piece);
-      self.board.$space_equals(current_piece.$location()['$[]'](0), current_piece.$location()['$[]'](1), nil);
-      (($a = [[row, col]]), $b = current_piece, $b['$location='].apply($b, $a), $a[$a.length-1]);
-      checkable = current_piece['$check?']();
-      (($a = [previous_loc]), $b = current_piece, $b['$location='].apply($b, $a), $a[$a.length-1]);
-      self.board.$space_equals(current_piece.$location()['$[]'](0), current_piece.$location()['$[]'](1), current_piece);
-      self.board.$space_equals(row, col, enemy_piece);
-      return checkable;
-    }), nil) && 'checkable_move?';
+    }), nil) && 'move_to';
   })($scope.base, $scope.get('Piece'));
   (function($base, $super) {
     function $Board(){};
@@ -19995,7 +20010,7 @@ if (move == null) move = nil;
     var def = self.$$proto, $scope = self.$$scope;
 
     def.board = nil;
-    self.$attr_accessor("board");
+    self.$attr_accessor("board", "black_moves", "white_moves");
 
     Opal.defn(self, '$initialize', function(board) {
       var self = this;
@@ -20004,63 +20019,95 @@ if (move == null) move = nil;
         board = self.$empty_board()
       }
       self.board = board;
-      return self.$set_board();
+      self.$set_board();
+      self.black_moves = [];
+      return self.white_moves = [];
+    });
+
+    Opal.defn(self, '$compute_moves', function() {
+      var self = this;
+
+      self.$compute_black_moves();
+      return self.$compute_white_moves();
+    });
+
+    Opal.defn(self, '$compute_black_moves', function() {
+      var $a, $b, TMP_26, self = this, moves = nil;
+
+      self.$puts("started computing black moves");
+      moves = [];
+      ($a = ($b = self.$all_pieces()).$each, $a.$$p = (TMP_26 = function(piece){var self = TMP_26.$$s || this, $a, $b, TMP_27;
+if (piece == null) piece = nil;
+      if (piece.$color()['$==']("black")) {
+          return ($a = ($b = piece.$possible_moves()).$each, $a.$$p = (TMP_27 = function(move){var self = TMP_27.$$s || this;
+if (move == null) move = nil;
+          return moves['$<<'](move)}, TMP_27.$$s = self, TMP_27), $a).call($b)
+          } else {
+          return nil
+        }}, TMP_26.$$s = self, TMP_26), $a).call($b);
+      return self.black_moves = moves;
+    });
+
+    Opal.defn(self, '$compute_white_moves', function() {
+      var $a, $b, TMP_28, self = this, moves = nil;
+
+      self.$puts("started computing white moves");
+      moves = [];
+      ($a = ($b = self.$all_pieces()).$each, $a.$$p = (TMP_28 = function(piece){var self = TMP_28.$$s || this, $a, $b, TMP_29;
+if (piece == null) piece = nil;
+      if (piece.$color()['$==']("white")) {
+          self.$puts("piece is a " + (piece.$class()) + " at " + (piece.$location()));
+          return ($a = ($b = piece.$possible_moves()).$each, $a.$$p = (TMP_29 = function(move){var self = TMP_29.$$s || this;
+if (move == null) move = nil;
+          if (piece.$location()['$==']([6, 4])) {
+              self.$puts(move.$inspect())};
+            return moves['$<<'](move);}, TMP_29.$$s = self, TMP_29), $a).call($b);
+          } else {
+          return nil
+        }}, TMP_28.$$s = self, TMP_28), $a).call($b);
+      self.$puts("finished computing white moves");
+      return self.white_moves = moves;
     });
 
     Opal.defn(self, '$stalemate?', function() {try {
 
-      var $a, $b, TMP_29, self = this;
+      var $a, $b, TMP_30, self = this;
 
-      ($a = ($b = self.$all_pieces()).$each, $a.$$p = (TMP_29 = function(piece){var self = TMP_29.$$s || this, $a;
+      ($a = ($b = self.$all_pieces()).$each, $a.$$p = (TMP_30 = function(piece){var self = TMP_30.$$s || this, $a;
 if (piece == null) piece = nil;
       if ((($a = piece.$possible_moves()['$nil?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
           return nil
           } else {
           Opal.ret(false)
-        }}, TMP_29.$$s = self, TMP_29), $a).call($b);
+        }}, TMP_30.$$s = self, TMP_30), $a).call($b);
       return true;
       } catch ($returner) { if ($returner === Opal.returner) { return $returner.$v } throw $returner; }
     });
 
     Opal.defn(self, '$game_over?', function() {try {
 
-      var $a, $b, TMP_30, self = this;
+      var $a, $b, TMP_31, self = this;
 
       if ((($a = self['$stalemate?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
         return true};
-      ($a = ($b = self.$kings()).$each, $a.$$p = (TMP_30 = function(king){var self = TMP_30.$$s || this, $a;
+      ($a = ($b = self.$kings()).$each, $a.$$p = (TMP_31 = function(king){var self = TMP_31.$$s || this, $a;
 if (king == null) king = nil;
       if ((($a = king['$checkmate?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
           Opal.ret(true)
           } else {
           return nil
-        }}, TMP_30.$$s = self, TMP_30), $a).call($b);
+        }}, TMP_31.$$s = self, TMP_31), $a).call($b);
       return false;
       } catch ($returner) { if ($returner === Opal.returner) { return $returner.$v } throw $returner; }
     });
 
     Opal.defn(self, '$white_king', function() {try {
 
-      var $a, $b, TMP_31, self = this;
-
-      ($a = ($b = self.$kings()).$each, $a.$$p = (TMP_31 = function(king){var self = TMP_31.$$s || this;
-if (king == null) king = nil;
-      if (king.$color()['$==']("white")) {
-          Opal.ret(king)
-          } else {
-          return nil
-        }}, TMP_31.$$s = self, TMP_31), $a).call($b);
-      return nil;
-      } catch ($returner) { if ($returner === Opal.returner) { return $returner.$v } throw $returner; }
-    });
-
-    Opal.defn(self, '$black_king', function() {try {
-
       var $a, $b, TMP_32, self = this;
 
       ($a = ($b = self.$kings()).$each, $a.$$p = (TMP_32 = function(king){var self = TMP_32.$$s || this;
 if (king == null) king = nil;
-      if (king.$color()['$==']("black")) {
+      if (king.$color()['$==']("white")) {
           Opal.ret(king)
           } else {
           return nil
@@ -20069,34 +20116,48 @@ if (king == null) king = nil;
       } catch ($returner) { if ($returner === Opal.returner) { return $returner.$v } throw $returner; }
     });
 
+    Opal.defn(self, '$black_king', function() {try {
+
+      var $a, $b, TMP_33, self = this;
+
+      ($a = ($b = self.$kings()).$each, $a.$$p = (TMP_33 = function(king){var self = TMP_33.$$s || this;
+if (king == null) king = nil;
+      if (king.$color()['$==']("black")) {
+          Opal.ret(king)
+          } else {
+          return nil
+        }}, TMP_33.$$s = self, TMP_33), $a).call($b);
+      return nil;
+      } catch ($returner) { if ($returner === Opal.returner) { return $returner.$v } throw $returner; }
+    });
+
     Opal.defn(self, '$kings', function() {
-      var $a, $b, TMP_33, self = this, my_kings = nil;
+      var $a, $b, TMP_34, self = this, my_kings = nil;
 
       my_kings = [];
-      ($a = ($b = self.$all_pieces()).$each, $a.$$p = (TMP_33 = function(piece){var self = TMP_33.$$s || this;
+      ($a = ($b = self.$all_pieces()).$each, $a.$$p = (TMP_34 = function(piece){var self = TMP_34.$$s || this;
 if (piece == null) piece = nil;
       if (piece.$class()['$==']($scope.get('King'))) {
           return my_kings['$<<'](piece)
           } else {
           return nil
-        }}, TMP_33.$$s = self, TMP_33), $a).call($b);
+        }}, TMP_34.$$s = self, TMP_34), $a).call($b);
       return my_kings;
     });
 
     Opal.defn(self, '$all_pieces', function() {
-      var $a, $b, TMP_34, self = this, pieces = nil;
+      var $a, $b, TMP_35, self = this, pieces = nil;
 
       pieces = [];
-      ($a = ($b = (0).$upto(7)).$each, $a.$$p = (TMP_34 = function(row){var self = TMP_34.$$s || this, $a, $b, TMP_35;
+      ($a = ($b = (0).$upto(7)).$each, $a.$$p = (TMP_35 = function(row){var self = TMP_35.$$s || this, $a, $b, TMP_36;
 if (row == null) row = nil;
-      return ($a = ($b = (0).$upto(7)).$each, $a.$$p = (TMP_35 = function(col){var self = TMP_35.$$s || this, $a;
-          if (self.board == null) self.board = nil;
+      return ($a = ($b = (0).$upto(7)).$each, $a.$$p = (TMP_36 = function(col){var self = TMP_36.$$s || this, $a;
 if (col == null) col = nil;
-        if ((($a = self.board['$[]'](row)['$[]'](col)['$nil?']()['$!']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            return pieces['$<<'](self.board['$[]'](row)['$[]'](col))
+        if ((($a = self.$piece_at(row, col)['$nil?']()['$!']()) !== nil && (!$a.$$is_boolean || $a == true))) {
+            return pieces['$<<'](self.$piece_at(row, col))
             } else {
             return nil
-          }}, TMP_35.$$s = self, TMP_35), $a).call($b)}, TMP_34.$$s = self, TMP_34), $a).call($b);
+          }}, TMP_36.$$s = self, TMP_36), $a).call($b)}, TMP_35.$$s = self, TMP_35), $a).call($b);
       return pieces;
     });
 
@@ -20128,28 +20189,11 @@ if (col == null) col = nil;
     });
 
     Opal.defn(self, '$empty_board', function() {
-      var $a, $b, TMP_36, self = this;
-
-      return ($a = ($b = $scope.get('Array')).$new, $a.$$p = (TMP_36 = function(){var self = TMP_36.$$s || this;
-
-      return $scope.get('Array').$new(8)}, TMP_36.$$s = self, TMP_36), $a).call($b, 8);
-    });
-
-    Opal.defn(self, '$display_board', function() {
       var $a, $b, TMP_37, self = this;
 
-      self.$puts("  a  b  c  d  e  f  g  h");
-      ($a = ($b = (7)).$downto, $a.$$p = (TMP_37 = function(line){var self = TMP_37.$$s || this, $a;
-if (line == null) line = nil;
-      self.$print($rb_plus(line, 1));
-        if ((($a = line['$even?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-          self.$display_even_line(line)};
-        if ((($a = line['$odd?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-          return self.$display_odd_line(line)
-          } else {
-          return nil
-        };}, TMP_37.$$s = self, TMP_37), $a).call($b, 0);
-      return self.$puts("  a  b  c  d  e  f  g  h");
+      return ($a = ($b = $scope.get('Array')).$new, $a.$$p = (TMP_37 = function(){var self = TMP_37.$$s || this;
+
+      return $scope.get('Array').$new(8)}, TMP_37.$$s = self, TMP_37), $a).call($b, 8);
     });
 
     Opal.defn(self, '$space_equals', function(row, col, data) {
@@ -20176,69 +20220,11 @@ if (column == null) column = nil;
     });
 
     Opal.defn(self, '$piece_at', function(row, column) {
-      var self = this;
+      var $a, $b, $c, $d, self = this;
 
+      if ((($a = ((($b = ((($c = ((($d = ($rb_gt(row, 7))) !== false && $d !== nil) ? $d : ($rb_lt(row, 0)))) !== false && $c !== nil) ? $c : ($rb_gt(column, 7)))) !== false && $b !== nil) ? $b : ($rb_lt(column, 0)))) !== nil && (!$a.$$is_boolean || $a == true))) {
+        return nil};
       return self.board['$[]'](row)['$[]'](column);
-    });
-
-    Opal.defn(self, '$display_even_line', function(line) {
-      var $a, $b, TMP_40, self = this;
-
-      ($a = ($b = (0)).$upto, $a.$$p = (TMP_40 = function(cell){var self = TMP_40.$$s || this, $a;
-        if (self.board == null) self.board = nil;
-if (cell == null) cell = nil;
-      if ((($a = self.board['$[]'](line)['$[]'](cell)['$nil?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-          if ((($a = cell['$even?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print("   ".$black_on_blue())};
-          if ((($a = cell['$odd?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print("   ".$black_on_green())};
-        } else if (self.board['$[]'](line)['$[]'](cell).$color()['$==']("black")) {
-          if ((($a = cell['$even?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print((((" ") + (self.board['$[]'](line)['$[]'](cell).$piece())) + " ").$black_on_blue())};
-          if ((($a = cell['$odd?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print((((" ") + (self.board['$[]'](line)['$[]'](cell).$piece())) + " ").$black_on_green())};
-          } else {
-          if ((($a = cell['$even?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print((((" ") + (self.board['$[]'](line)['$[]'](cell).$piece())) + " ").$white_on_blue())};
-          if ((($a = cell['$odd?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print((((" ") + (self.board['$[]'](line)['$[]'](cell).$piece())) + " ").$white_on_green())};
-        };
-        if (cell['$=='](7)) {
-          return self.$print($rb_plus(line, 1))
-          } else {
-          return nil
-        };}, TMP_40.$$s = self, TMP_40), $a).call($b, 7);
-      return self.$print("\n");
-    });
-
-    Opal.defn(self, '$display_odd_line', function(line) {
-      var $a, $b, TMP_41, self = this;
-
-      ($a = ($b = (0)).$upto, $a.$$p = (TMP_41 = function(cell){var self = TMP_41.$$s || this, $a;
-        if (self.board == null) self.board = nil;
-if (cell == null) cell = nil;
-      if ((($a = self.board['$[]'](line)['$[]'](cell)['$nil?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-          if ((($a = cell['$even?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print("   ".$black_on_green())};
-          if ((($a = cell['$odd?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print("   ".$black_on_blue())};
-        } else if (self.board['$[]'](line)['$[]'](cell).$color()['$==']("black")) {
-          if ((($a = cell['$even?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print((((" ") + (self.board['$[]'](line)['$[]'](cell).$piece())) + " ").$black_on_green())};
-          if ((($a = cell['$odd?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print((((" ") + (self.board['$[]'](line)['$[]'](cell).$piece())) + " ").$black_on_blue())};
-          } else {
-          if ((($a = cell['$even?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print((((" ") + (self.board['$[]'](line)['$[]'](cell).$piece())) + " ").$white_on_green())};
-          if ((($a = cell['$odd?']()) !== nil && (!$a.$$is_boolean || $a == true))) {
-            self.$print((((" ") + (self.board['$[]'](line)['$[]'](cell).$piece())) + " ").$white_on_blue())};
-        };
-        if (cell['$=='](7)) {
-          return self.$print($rb_plus(line, 1))
-          } else {
-          return nil
-        };}, TMP_41.$$s = self, TMP_41), $a).call($b, 7);
-      return self.$print("\n");
     });
 
     Opal.defn(self, '$set_board', function() {
@@ -20249,16 +20235,16 @@ if (cell == null) cell = nil;
     });
 
     Opal.defn(self, '$set_pawns', function() {
-      var $a, $b, TMP_42, $c, TMP_43, self = this;
+      var $a, $b, TMP_40, $c, TMP_41, self = this;
 
-      ($a = ($b = self.board['$[]'](1)).$each_index, $a.$$p = (TMP_42 = function(index){var self = TMP_42.$$s || this;
+      ($a = ($b = self.board['$[]'](1)).$each_index, $a.$$p = (TMP_40 = function(index){var self = TMP_40.$$s || this;
         if (self.board == null) self.board = nil;
 if (index == null) index = nil;
-      return self.board['$[]'](1)['$[]='](index, $scope.get('Pawn').$new([1, index], "white"))}, TMP_42.$$s = self, TMP_42), $a).call($b);
-      return ($a = ($c = self.board['$[]'](6)).$each_index, $a.$$p = (TMP_43 = function(index){var self = TMP_43.$$s || this;
+      return self.board['$[]'](1)['$[]='](index, $scope.get('Pawn').$new([1, index], "white"))}, TMP_40.$$s = self, TMP_40), $a).call($b);
+      return ($a = ($c = self.board['$[]'](6)).$each_index, $a.$$p = (TMP_41 = function(index){var self = TMP_41.$$s || this;
         if (self.board == null) self.board = nil;
 if (index == null) index = nil;
-      return self.board['$[]'](6)['$[]='](index, $scope.get('Pawn').$new([6, index], "black"))}, TMP_43.$$s = self, TMP_43), $a).call($c);
+      return self.board['$[]'](6)['$[]='](index, $scope.get('Pawn').$new([6, index], "black"))}, TMP_41.$$s = self, TMP_41), $a).call($c);
     });
 
     Opal.defn(self, '$set_nobles', function() {
@@ -20269,21 +20255,21 @@ if (index == null) index = nil;
     });
 
     Opal.defn(self, '$set_white_nobles', function() {
-      var $a, $b, TMP_44, self = this;
+      var $a, $b, TMP_42, self = this;
 
-      return ($a = ($b = self.board['$[]'](0)).$each_index, $a.$$p = (TMP_44 = function(index){var self = TMP_44.$$s || this, $case = nil;
+      return ($a = ($b = self.board['$[]'](0)).$each_index, $a.$$p = (TMP_42 = function(index){var self = TMP_42.$$s || this, $case = nil;
         if (self.board == null) self.board = nil;
 if (index == null) index = nil;
-      return (function() {$case = index;if ((0)['$===']($case) || (7)['$===']($case)) {return self.board['$[]'](0)['$[]='](index, $scope.get('Rook').$new([0, index], "white"))}else if ((1)['$===']($case) || (6)['$===']($case)) {return self.board['$[]'](0)['$[]='](index, $scope.get('Knight').$new([0, index], "white"))}else if ((2)['$===']($case) || (5)['$===']($case)) {return self.board['$[]'](0)['$[]='](index, $scope.get('Bishop').$new([0, index], "white"))}else if ((3)['$===']($case)) {return self.board['$[]'](0)['$[]='](3, $scope.get('Queen').$new([0, 3], "white"))}else if ((4)['$===']($case)) {return self.board['$[]'](0)['$[]='](4, $scope.get('King').$new([0, 4], "white"))}else { return nil }})()}, TMP_44.$$s = self, TMP_44), $a).call($b);
+      return (function() {$case = index;if ((0)['$===']($case) || (7)['$===']($case)) {return self.board['$[]'](0)['$[]='](index, $scope.get('Rook').$new([0, index], "white"))}else if ((1)['$===']($case) || (6)['$===']($case)) {return self.board['$[]'](0)['$[]='](index, $scope.get('Knight').$new([0, index], "white"))}else if ((2)['$===']($case) || (5)['$===']($case)) {return self.board['$[]'](0)['$[]='](index, $scope.get('Bishop').$new([0, index], "white"))}else if ((3)['$===']($case)) {return self.board['$[]'](0)['$[]='](3, $scope.get('Queen').$new([0, 3], "white"))}else if ((4)['$===']($case)) {return self.board['$[]'](0)['$[]='](4, $scope.get('King').$new([0, 4], "white"))}else { return nil }})()}, TMP_42.$$s = self, TMP_42), $a).call($b);
     });
 
     return (Opal.defn(self, '$set_black_nobles', function() {
-      var $a, $b, TMP_45, self = this;
+      var $a, $b, TMP_43, self = this;
 
-      return ($a = ($b = self.board['$[]'](7)).$each_index, $a.$$p = (TMP_45 = function(index){var self = TMP_45.$$s || this, $case = nil;
+      return ($a = ($b = self.board['$[]'](7)).$each_index, $a.$$p = (TMP_43 = function(index){var self = TMP_43.$$s || this, $case = nil;
         if (self.board == null) self.board = nil;
 if (index == null) index = nil;
-      return (function() {$case = index;if ((0)['$===']($case) || (7)['$===']($case)) {return self.board['$[]'](7)['$[]='](index, $scope.get('Rook').$new([7, index], "black"))}else if ((1)['$===']($case) || (6)['$===']($case)) {return self.board['$[]'](7)['$[]='](index, $scope.get('Knight').$new([7, index], "black"))}else if ((2)['$===']($case) || (5)['$===']($case)) {return self.board['$[]'](7)['$[]='](index, $scope.get('Bishop').$new([7, index], "black"))}else if ((3)['$===']($case)) {return self.board['$[]'](7)['$[]='](3, $scope.get('King').$new([7, 3], "black"))}else if ((4)['$===']($case)) {return self.board['$[]'](7)['$[]='](4, $scope.get('Queen').$new([7, 4], "black"))}else { return nil }})()}, TMP_45.$$s = self, TMP_45), $a).call($b);
+      return (function() {$case = index;if ((0)['$===']($case) || (7)['$===']($case)) {return self.board['$[]'](7)['$[]='](index, $scope.get('Rook').$new([7, index], "black"))}else if ((1)['$===']($case) || (6)['$===']($case)) {return self.board['$[]'](7)['$[]='](index, $scope.get('Knight').$new([7, index], "black"))}else if ((2)['$===']($case) || (5)['$===']($case)) {return self.board['$[]'](7)['$[]='](index, $scope.get('Bishop').$new([7, index], "black"))}else if ((3)['$===']($case)) {return self.board['$[]'](7)['$[]='](3, $scope.get('King').$new([7, 3], "black"))}else if ((4)['$===']($case)) {return self.board['$[]'](7)['$[]='](4, $scope.get('Queen').$new([7, 4], "black"))}else { return nil }})()}, TMP_43.$$s = self, TMP_43), $a).call($b);
     }), nil) && 'set_black_nobles';
   })($scope.base, null);
   return (function($base, $super) {
@@ -20293,14 +20279,14 @@ if (index == null) index = nil;
     var def = self.$$proto, $scope = self.$$scope;
 
     return (Opal.defn(self, '$my_repeated_permutation', function() {
-      var $a, $b, TMP_46, self = this, return_array = nil;
+      var $a, $b, TMP_44, self = this, return_array = nil;
 
       return_array = [];
-      ($a = ($b = self).$each, $a.$$p = (TMP_46 = function(current_num){var self = TMP_46.$$s || this, $a, $b, TMP_47;
+      ($a = ($b = self).$each, $a.$$p = (TMP_44 = function(current_num){var self = TMP_44.$$s || this, $a, $b, TMP_45;
 if (current_num == null) current_num = nil;
-      return ($a = ($b = self).$each, $a.$$p = (TMP_47 = function(other_num){var self = TMP_47.$$s || this;
+      return ($a = ($b = self).$each, $a.$$p = (TMP_45 = function(other_num){var self = TMP_45.$$s || this;
 if (other_num == null) other_num = nil;
-        return return_array['$<<']([current_num, other_num])}, TMP_47.$$s = self, TMP_47), $a).call($b)}, TMP_46.$$s = self, TMP_46), $a).call($b);
+        return return_array['$<<']([current_num, other_num])}, TMP_45.$$s = self, TMP_45), $a).call($b)}, TMP_44.$$s = self, TMP_44), $a).call($b);
       return return_array;
     }), nil) && 'my_repeated_permutation'
   })($scope.base, null);
@@ -20315,92 +20301,3 @@ if (other_num == null) other_num = nil;
   Opal.add_stubs(['$exit']);
   return $scope.get('Kernel').$exit()
 })(Opal);
-
-
-
-
-
-
-
-
-
-
-
-/* Non-Opal Javascript */
-
-var mygame = Opal.Game.$new();
-
-
-
-$(document).bind('mousemove', function(e){
-    $('.tail').css({
-       left:  e.pageX + 20,
-       top:   e.pageY
-    });
-});
-
-var myTail = document.getElementsByClassName("tail")[0]
-
-
-
-var pieces = document.getElementsByClassName("piece");
-for (var i = 0, len = pieces.length; i < len; i++) {
-  pieces[i].addEventListener("click", function(event) {
-    if (myTail.innerHTML === "") {
-
-      change_id(event.currentTarget, myTail)
-      change_class(event.currentTarget, myTail)
-      myTail.innerHTML = event.currentTarget.innerHTML;
-      event.currentTarget.innerHTML = ""; } else {
-        var current_col = myTail.id[0];
-        var current_row = parseInt(myTail.id[1]);
-        var target_col = event.currentTarget.id[0];
-        var target_row = parseInt(event.currentTarget.id[1]);
-        myboolean = mygame.$valid_move(current_col, current_row, target_col, target_row);
-        if(myboolean) {
-          mygame.$set_piece(current_col, current_row, target_col, target_row)
-          change_class(myTail, event.currentTarget)
-          console.log("mytailsinnerhtml" + myTail.innerHTML)
-          event.currentTarget.innerHTML = myTail.innerHTML;
-          console.log("currenttargetsinnerhtml" + event.currentTarget.innerHTML)
-          myTail.innerHTML = "";
-          update_board();
-        } else {
-          console.log("try again");
-        }
-      }
-  }, false);
-}
-
-function update_board() {
-  for (var i = 0, len = pieces.length; i < len; i++) {
-    console.log(pieces[i].id)
-    var piece_id = pieces[i].id
-    var col = piece_id[0];
-    var row = parseInt(piece_id[1]);
-
-    text = mygame.$get_piece_text(col, row);
-    color = mygame.$get_piece_color(col, row);
-    console.log(text);
-    pieces[i].innerHTML = text
-    $(pieces[i]).addClass(color);
-  }
-}
-
-update_board();
-
-
-function change_class(current, target){
-    if ($(current).hasClass('black')){
-      $(target).addClass('black');
-      $(target).removeClass('white');
-    }
-    if ($(current).hasClass('white')) {
-      $(target).addClass('white');
-      $(target).removeClass('black');
-    }
-} 
-
-function change_id(current, target){
-  $(target).attr("id", current.id)
-}
