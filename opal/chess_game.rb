@@ -408,14 +408,24 @@ class Pawn < Piece
     moves
   end
 
+  def become_queen(row, col, previous_loc)
+    @board.space_equals(row, col, Queen.new([row, col], @color) )
+    @board.space_equals(previous_loc[0], previous_loc[1], nil) unless [row, col] == @location
+    @board.piece_at(row, col).board = @board
+  end
+
   def move_to(row, col)
     move = [row, col]
     current_piece = @board.piece_at(location[0], location[1])
     return nil unless possible_moves.include?(move)
+    if row == 7
+      become_queen(row, col, @location) 
+      return nil
+    end
     puts "didn't return nil"
     @has_moved = true unless move == @location
     @board.space_equals(row, col, current_piece)
-    @board.space_equals(current_piece.location[0], current_piece.location[1], nil)
+    @board.space_equals(current_piece.location[0], current_piece.location[1], nil) unless move == @location
     current_piece.location = [row, col]
     current_piece.row_loc = row
     current_piece.col_loc = col

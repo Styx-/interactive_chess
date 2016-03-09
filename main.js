@@ -19134,7 +19134,7 @@ Opal.modules["corelib/unsupported"] = function(Opal) {
   }
   var self = Opal.top, $scope = Opal, nil = Opal.nil, $breaker = Opal.breaker, $slice = Opal.slice, $klass = Opal.klass, $hash2 = Opal.hash2;
 
-  Opal.add_stubs(['$new', '$set_board_pointer', '$each', '$!', '$nil?', '$[]', '$board', '$board=', '$upto', '$get_piece', '$html_text', '$color', '$include?', '$possible_moves', '$convert_to_move', '$set_piece', '$check?', '$my_king', '$puts', '$class', '$location', '$space_equals', '$location=', '$piece_at', '$attr_accessor', '$attr_reader', '$==', '$black_king', '$white_king', '$piece_color', '$eql?', '$occupied_targets', '$select', '$enemy_of?', '$map', '$downto', '$<<', '$-@', '$to_a', '$my_repeated_permutation', '$apply_directions', '$apply_location', '$apply_board_limits', '$apply_relative_pieces', '$reachable_enemy?', '$further_than?', '$delete_if', '$possible_moves_without_relatives', '$!=', '$<', '$>', '$+', '$*', '$cardinal_move?', '$can_move_north?', '$northern_move?', '$can_move_south?', '$southern_move?', '$can_move_east?', '$eastern_move?', '$can_move_west?', '$western_move?', '$can_move_northeast?', '$northeastern_move?', '$can_move_northwest?', '$northwestern_move?', '$can_move_southeast?', '$southeastern_move?', '$can_move_southwest?', '$southwestern_move?', '$north_of?', '$south_of?', '$east_of?', '$west_of?', '$northeast_of?', '$northwest_of?', '$southeast_of?', '$southwest_of?', '$same_direction?', '$-', '$diagonal_of?', '$>=', '$<=', '$row_loc=', '$col_loc=', '$ally_held_position?', '$enemies_of', '$compute_moves', '$white_moves', '$black_moves', '$checkable_move?', '$set_board', '$empty_board', '$compute_black_moves', '$compute_white_moves', '$all_pieces', '$inspect', '$stalemate?', '$checkmate?', '$kings', '$move_to', '$[]=', '$set_pawns', '$set_nobles', '$each_index', '$set_white_nobles', '$set_black_nobles', '$===']);
+  Opal.add_stubs(['$new', '$set_board_pointer', '$each', '$!', '$nil?', '$[]', '$board', '$board=', '$upto', '$get_piece', '$html_text', '$color', '$include?', '$possible_moves', '$convert_to_move', '$set_piece', '$check?', '$my_king', '$puts', '$class', '$location', '$space_equals', '$location=', '$piece_at', '$attr_accessor', '$attr_reader', '$==', '$black_king', '$white_king', '$piece_color', '$eql?', '$occupied_targets', '$select', '$enemy_of?', '$map', '$downto', '$<<', '$-@', '$to_a', '$my_repeated_permutation', '$apply_directions', '$apply_location', '$apply_board_limits', '$apply_relative_pieces', '$reachable_enemy?', '$further_than?', '$delete_if', '$possible_moves_without_relatives', '$!=', '$<', '$>', '$+', '$*', '$cardinal_move?', '$can_move_north?', '$northern_move?', '$can_move_south?', '$southern_move?', '$can_move_east?', '$eastern_move?', '$can_move_west?', '$western_move?', '$can_move_northeast?', '$northeastern_move?', '$can_move_northwest?', '$northwestern_move?', '$can_move_southeast?', '$southeastern_move?', '$can_move_southwest?', '$southwestern_move?', '$north_of?', '$south_of?', '$east_of?', '$west_of?', '$northeast_of?', '$northwest_of?', '$southeast_of?', '$southwest_of?', '$same_direction?', '$-', '$diagonal_of?', '$>=', '$<=', '$become_queen', '$row_loc=', '$col_loc=', '$ally_held_position?', '$enemies_of', '$compute_moves', '$white_moves', '$black_moves', '$checkable_move?', '$set_board', '$empty_board', '$compute_black_moves', '$compute_white_moves', '$all_pieces', '$inspect', '$stalemate?', '$checkmate?', '$kings', '$move_to', '$[]=', '$set_pawns', '$set_nobles', '$each_index', '$set_white_nobles', '$set_black_nobles', '$===']);
   (function($base, $super) {
     function $Game(){};
     var self = $Game = $klass($base, $super, 'Game', $Game);
@@ -19749,6 +19749,17 @@ if (move == null) move = nil;
       return moves;
     });
 
+    Opal.defn(self, '$become_queen', function(row, col, previous_loc) {
+      var $a, $b, self = this;
+
+      self.board.$space_equals(row, col, $scope.get('Queen').$new([row, col], self.color));
+      if ([row, col]['$=='](self.location)) {
+        } else {
+        self.board.$space_equals(previous_loc['$[]'](0), previous_loc['$[]'](1), nil)
+      };
+      return (($a = [self.board]), $b = self.board.$piece_at(row, col), $b['$board='].apply($b, $a), $a[$a.length-1]);
+    });
+
     return (Opal.defn(self, '$move_to', function(row, col) {
       var $a, $b, self = this, move = nil, current_piece = nil;
 
@@ -19758,13 +19769,19 @@ if (move == null) move = nil;
         } else {
         return nil
       };
+      if (row['$=='](7)) {
+        self.$become_queen(row, col, self.location);
+        return nil;};
       self.$puts("didn't return nil");
       if (move['$=='](self.location)) {
         } else {
         self.has_moved = true
       };
       self.board.$space_equals(row, col, current_piece);
-      self.board.$space_equals(current_piece.$location()['$[]'](0), current_piece.$location()['$[]'](1), nil);
+      if (move['$=='](self.location)) {
+        } else {
+        self.board.$space_equals(current_piece.$location()['$[]'](0), current_piece.$location()['$[]'](1), nil)
+      };
       (($a = [[row, col]]), $b = current_piece, $b['$location='].apply($b, $a), $a[$a.length-1]);
       (($a = [row]), $b = current_piece, $b['$row_loc='].apply($b, $a), $a[$a.length-1]);
       (($a = [col]), $b = current_piece, $b['$col_loc='].apply($b, $a), $a[$a.length-1]);
@@ -20308,7 +20325,23 @@ if (other_num == null) other_num = nil;
 
 
 
+
+
+
+
+
+
+
+
+
 /* Non-Opal Javascript */
+
+var conw = $('.container').width();
+$('.container').css({'height':conw+'px'});
+
+var cw = $('.cell').width();
+$('.cell').css({'height':cw+'px'});
+
 
 var mygame = Opal.Game.$new();
 
@@ -20316,7 +20349,7 @@ var mygame = Opal.Game.$new();
 
 $(document).bind('mousemove', function(e){
     $('.tail').css({
-       left:  e.pageX + 20,
+       left:  e.pageX + 10,
        top:   e.pageY
     });
 });
