@@ -20336,11 +20336,11 @@ if (other_num == null) other_num = nil;
 
 /* Non-Opal Javascript */
 
-/* var conw = $('.container').width();
+var conw = $('.container').width();
 $('.container').css({'height':conw+'px'});
 
 var cw = $('.cell').width();
-$('.cell').css({'height':cw+'px'}); */
+$('.cell').css({'height':cw+'px'});
 
 
 var mygame = Opal.Game.$new();

@@ -5,7 +5,7 @@
 }
 
 .container {
-  width: 675px;
+  width: 40%;
   background-color: #000;
   margin: 30px auto;
   display: block;
@@ -18,8 +18,7 @@
 
 .cell {
   background-color: #eee;
-  width: 75px;
-  height: 75px;
+  width: 11.11%;
   cursor: pointer;
   border: 1px solid black;
   display: flex;
