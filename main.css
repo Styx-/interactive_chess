@@ -19,6 +19,7 @@
 .cell {
   background-color: #eee;
   width: 11.11%;
+  height: 75px;
   cursor: pointer;
   border: 1px solid black;
   display: flex;
